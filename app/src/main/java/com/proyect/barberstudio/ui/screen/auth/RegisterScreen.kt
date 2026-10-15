@@ -154,7 +154,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = BtnColor), 
+            colors = ButtonDefaults.buttonColors(containerColor = BtnColor),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(text = "Crear Cuenta", fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -163,7 +163,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
-            onClick = { /* Lógica de Google a futuro */ },
+            onClick = { /* logica de Google para despues */ },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
