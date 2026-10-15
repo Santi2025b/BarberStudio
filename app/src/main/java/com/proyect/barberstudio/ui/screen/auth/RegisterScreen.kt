@@ -60,7 +60,7 @@ fun RegisterScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_scissors),
                             contentDescription = "Logo Barberia",
-                            tint = Color.White,
+                            tint = Color.White, //para colorear la imagen vectorial la formita nomas
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -154,7 +154,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = BtnColor), // Aquí usamos tu variable BtnColor
+            colors = ButtonDefaults.buttonColors(containerColor = BtnColor), 
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(text = "Crear Cuenta", fontSize = 16.sp, fontWeight = FontWeight.Bold)
