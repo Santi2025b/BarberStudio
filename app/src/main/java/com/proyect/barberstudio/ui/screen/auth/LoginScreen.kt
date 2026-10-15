@@ -134,7 +134,7 @@ fun LoginScreen(
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
             TextButton(
                 onClick = onForgotPasswordClick,
-                contentPadding = PaddingValues(0.dp) 
+                contentPadding = PaddingValues(0.dp)
             ) {
                 Text(
                     text = "¿Olvidaste tu contraseña?",
