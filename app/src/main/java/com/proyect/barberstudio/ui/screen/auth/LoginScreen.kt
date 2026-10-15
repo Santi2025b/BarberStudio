@@ -134,7 +134,7 @@ fun LoginScreen(
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
             TextButton(
                 onClick = onForgotPasswordClick,
-                contentPadding = PaddingValues(0.dp) // quita el padding por defecto del botón
+                contentPadding = PaddingValues(0.dp) 
             ) {
                 Text(
                     text = "¿Olvidaste tu contraseña?",
@@ -179,19 +179,29 @@ fun LoginScreen(
             contentAlignment = Alignment.Center
         ) {
             TextButton(onClick = onNavigateToRegister) {
-                // buildAnnotatedString permite tener diferentes estilos de texto en una misma línea
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(color = Color.Gray)) {
-                            append("NO tienes cuenta? ")
-                        }
-                        withStyle(style = SpanStyle(color = Color.Black, fontWeight = FontWeight.Bold)) {
-                            append("Crear Cuenta")
-                        }
-                    },
-                    fontSize = 13.sp,
-                    textAlign = TextAlign.Center
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "NO tienes cuenta? ",
+                        color = Color.Gray,
+                        fontSize = 13.sp
+                    )
+
+                    TextButton(
+                        onClick = onNavigateToRegister,
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Text(
+                            text = "Crear Cuenta",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
+                    }
+                }
             }
         }
     }
