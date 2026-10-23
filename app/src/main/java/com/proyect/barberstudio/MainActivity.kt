@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.proyect.barberstudio.ui.navigation.AppNavigation
 import com.proyect.barberstudio.ui.screen.auth.RegisterScreen
 import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 
@@ -20,10 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BarberStudioTheme {
-                RegisterScreen(
-                    onRegistered = {},
-                    onClose = {}
-                )
+                AppNavigation()
             }
         }
     }
