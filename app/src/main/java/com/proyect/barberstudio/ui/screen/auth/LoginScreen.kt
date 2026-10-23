@@ -93,7 +93,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         //CAMPOS DE TEXTO
-        Text(text = "Email", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Correo electrónico", fontSize = 14.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = email,
@@ -106,7 +106,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Password", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Contraseña", fontSize = 14.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = password,
@@ -152,7 +152,7 @@ fun LoginScreen(
             colors = ButtonDefaults.buttonColors(containerColor = BtnColor),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Log in", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Iniciar sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -164,7 +164,7 @@ fun LoginScreen(
                 .height(52.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "G   Continue with Google", color = Color.Black, fontWeight = FontWeight.Bold)
+            Text(text = "G   Continuar con Google", color = Color.Black, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.weight(1f))
