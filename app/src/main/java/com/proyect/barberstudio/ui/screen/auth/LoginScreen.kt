@@ -16,14 +16,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,7 +93,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         //CAMPOS DE TEXTO
-        Text(text = "Email", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Correo electrónico", fontSize = 14.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = email,
@@ -114,7 +110,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Password", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Contraseña", fontSize = 14.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = password,
@@ -164,7 +160,7 @@ fun LoginScreen(
             colors = ButtonDefaults.buttonColors(containerColor = BtnColor),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Log in", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Iniciar sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -176,7 +172,7 @@ fun LoginScreen(
                 .height(52.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "G   Continue with Google", color = Color.Black, fontWeight = FontWeight.Bold)
+            Text(text = "G   Continuar con Google", color = Color.Black, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.weight(1f))

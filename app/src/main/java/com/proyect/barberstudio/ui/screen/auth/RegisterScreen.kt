@@ -123,7 +123,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Email", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Correo electrónico", fontSize = 14.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = email,
@@ -140,7 +140,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Password", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Contraseña", fontSize = 14.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = password,
