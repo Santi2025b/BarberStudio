@@ -11,33 +11,45 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = AzulPrimario,
+    onPrimary = Blanco,
+    primaryContainer = AzulClaro,
+    onPrimaryContainer = AzulPrimario,
+    background = Blanco,
+    onBackground = TextoPrincipal,
+    surface = Blanco,
+    onSurface = TextoPrincipal,
+    surfaceVariant = GrisFondo,
+    onSurfaceVariant = TextoSecundario,
+    outline = Borde,
+    error = Rojo,
+    onError = Blanco
 )
+
+private val DarkColorScheme = darkColorScheme(
+    primary = AzulPrimario,
+    onPrimary = Blanco,
+    primaryContainer = AzulClaroOscuro,
+    onPrimaryContainer = TextoClaro,
+    background = FondoOscuro,
+    onBackground = TextoClaro,
+    surface = SuperficieOscura,
+    onSurface = TextoClaro,
+    surfaceVariant = SuperficieOscura,
+    onSurfaceVariant = TextoClaroSecundario,
+    outline = BordeOscuro,
+    error = Rojo,
+    onError = Blanco
+)
+
+
 
 @Composable
 fun BarberStudioTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
