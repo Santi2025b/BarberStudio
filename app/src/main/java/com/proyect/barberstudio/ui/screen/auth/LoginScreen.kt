@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyect.barberstudio.R
+import com.proyect.barberstudio.R.string.login_bienvenida
 
 import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 
@@ -86,7 +88,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         //BIENVENIDA
-        Text(text = "BIENVENIDO", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+        Text(text = stringResource(login_bienvenida), fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
         Spacer(modifier = Modifier.height(4.dp))
         Text(text = "Tu proximo corte comienza aqui", color = Color.Gray, fontSize = 14.sp)
 

@@ -1,3 +1,39 @@
 <resources>
+    //como nombrarlos: pantalla_que (login_boton, registro_titulo=
+
     <string name="app_name">BarberStudio</string>
+
+    <!-- Marca (se repite en varias pantallas) -->
+    <string name="marca_nombre">BARBER STUDIO</string>
+    <string name="logo_descripcion">Logo de la barbería</string>
+
+    <!-- Login -->
+    <string name="login_titulo">INICIAR SESIÓN</string>
+    <string name="login_imagen_descripcion">Interior de la barbería</string>
+    <string name="login_bienvenida">Bienvenido</string>
+    <string name="login_subtitulo">Tu próximo corte comienza aquí.</string>
+    <string name="login_olvidaste">¿Olvidaste tu contraseña?</string>
+    <string name="login_boton">Iniciar sesión</string>
+    <string name="login_sin_cuenta">¿No tenés cuenta?</string>
+    <string name="login_crear_cuenta">Crear cuenta</string>
+
+    <!-- Registro -->
+    <string name="registro_titulo">Crear cuenta</string>
+    <string name="registro_subtitulo">Completá los campos con tu información.</string>
+    <string name="registro_boton">Crear cuenta</string>
+
+    <!-- Campos de texto  -->
+    <string name="campo_nombre">Nombre</string>
+    <string name="campo_telefono">Teléfono</string>
+    <string name="campo_email">Correo electrónico</string>
+    <string name="campo_contrasena">Contraseña</string>
+    <string name="ejemplo_nombre">Carlos Tevez</string>
+    <string name="ejemplo_telefono">+54 9 3844 408976</string>
+    <string name="ejemplo_email">carlos.tevez@gmail.com</string>
+    <string name="mostrar_contrasena">Mostrar contraseña</string>
+    <string name="ocultar_contrasena">Ocultar contraseña</string>
+
+    <!-- Comunes -->
+    <string name="continuar_google">Continuar con Google</string>
+    <string name="cerrar">Cerrar</string>
 </resources>
