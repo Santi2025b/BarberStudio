@@ -98,10 +98,14 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("alex.morgan@email.com", color = Color.LightGray) },
+            placeholder = { Text("tuEmail@email.com", color = Color.LightGray) },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -121,7 +125,11 @@ fun LoginScreen(
                     Icon(imageVector = icon, contentDescription = "Ver password")
                 }
             },
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
