@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.proyect.barberstudio.R
 import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.proyect.barberstudio.ui.components.ProfileMenuItem
 import com.proyect.barberstudio.ui.screen.profile.ProfileUiEvent
 import com.proyect.barberstudio.ui.screen.profile.ProfileUiState
 import com.proyect.barberstudio.ui.screen.profile.ProfileViewModel
@@ -232,41 +233,6 @@ fun ProfileElements( //Stateless View sin estado
     }
 }
 
-@Composable
-fun ProfileMenuItem(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            tint = Color.DarkGray,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.Black)
-            Text(text = subtitle, fontSize = 12.sp, color = Color.Gray)
-        }
-        Icon(
-            imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Ir a $title",
-            tint = Color.Gray,
-            modifier = Modifier.size(20.dp)
-        )
-
-    }
-
-}
 
 @Preview(showBackground = true)
 @Composable

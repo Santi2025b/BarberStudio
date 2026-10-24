@@ -6,10 +6,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.proyect.barberstudio.ui.screen.auth.LoginScreen
 import com.proyect.barberstudio.ui.screen.auth.RegisterScreen
+import com.proyect.barberstudio.ui.screen.home.ProfileScreen
 
 object Rutas {
     const val LOGIN = "login"
     const val REGISTRO = "registro"
+    const val MAIN = "main" // ruta que contiene la app principal
 }
 
 @Composable
@@ -24,7 +26,12 @@ fun AppNavigation() {
         // registra pantalla de login
         composable(Rutas.LOGIN) {
             LoginScreen(
-                onLoginClick = { },
+                onLoginClick = {
+                    // uso popUpTo para borrar el login del stack de pantallas
+                    navController.navigate(Rutas.MAIN){
+                        popUpTo(Rutas.LOGIN) { inclusive = true }
+                    }
+                },
                 onNavigateToRegister = { navController.navigate(Rutas.REGISTRO) },
                 onForgotPasswordClick = { }
             )
@@ -36,6 +43,10 @@ fun AppNavigation() {
                 onRegistered = { navController.popBackStack() },
                 onClose = { navController.popBackStack() }
             )
+        }
+
+        composable(Rutas.MAIN) {
+            MainScreen()
         }
     }
 }
