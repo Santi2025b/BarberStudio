@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.proyect.barberstudio.R
-import com.proyect.barberstudio.ui.theme.BtnColor
+
 import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 
 @Composable
@@ -157,7 +157,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = BtnColor),
+            //borre el color harcodeado, MaterialTheme.colorScheme.primary por defecto, y primary es azul que est en Theme.kt.
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(text = "Iniciar sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
