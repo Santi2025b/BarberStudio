@@ -49,6 +49,10 @@
     <string name="ver_todo">Ver todo</string>
     <string name="notificaciones">Notificaciones</string>
 
+    <!-- Turnos -->
+    <string name="turnos_titulo">Mis turnos</string>
+    <string name="turnos_subtitulo">Tu próximo cambio de look, a un toque.</string>
+
     <!-- Formatos con huecos: %1$ = primer argumento, %2$ = segundo; s = texto, d = número entero -->
     <string name="servicio_precio_duracion">$%1$d · %2$d min</string>
     <string name="precio">$%1$,d</string>
