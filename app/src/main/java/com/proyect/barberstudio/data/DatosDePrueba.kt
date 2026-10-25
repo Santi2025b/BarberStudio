@@ -4,6 +4,7 @@ import com.proyect.barberstudio.R
 import com.proyect.barberstudio.data.model.Producto
 import com.proyect.barberstudio.data.model.Servicio
 import com.proyect.barberstudio.data.model.Turno
+import com.proyect.barberstudio.data.model.EstadoTurno
 
 // Datos falsos para mostrar en las pantallas mientras no tengamos base de datos ni servidor.
 // Es un "object": existe UNA sola instancia en toda la app y se usa sin crearla (DatosDePrueba.servicios).
@@ -38,4 +39,21 @@ object DatosDePrueba {
         servicio = servicios[2],
         barbero = "Oscar Lazar"
     )
+
+    val turnosProximos = listOf(
+        proximoTurno,
+        Turno(2, "30", "OCT", "Viernes, 30 de octubre", "18:00–18:30", servicios[0],
+            "Leo Martínez")
+    )
+
+    val turnosPasados = listOf(
+        Turno(3, "02", "OCT", "Viernes, 2 de octubre", "10:00–10:45", servicios[2],
+            "Marcus Reed", EstadoTurno.COMPLETADO),
+        Turno(4, "18", "SEP", "Viernes, 18 de septiembre", "17:00–17:30",
+            servicios[0], "Matías Rojas", EstadoTurno.COMPLETADO),
+        Turno(5, "04", "SEP", "Viernes, 4 de septiembre", "11:00–11:45", servicios[2],
+            "Santiago Barreto", EstadoTurno.CANCELADO)
+    )
+
+
 }

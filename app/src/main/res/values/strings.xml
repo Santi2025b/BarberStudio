@@ -38,7 +38,6 @@
     <string name="cerrar">Cerrar</string>
 
 
-
     <!-- Inicio -->
     <string name="inicio_saludo">Hola, %1$s.</string>
     <string name="inicio_subtitulo">Tu próximo corte, a un toque.</string>
@@ -48,6 +47,41 @@
     <string name="inicio_productos">Productos</string>
     <string name="ver_todo">Ver todo</string>
     <string name="notificaciones">Notificaciones</string>
+
+    <!-- Turnos -->
+    <string name="turnos_titulo">Mis turnos</string>
+    <string name="turnos_subtitulo_proximos">Tu próximo cambio de look, a un toque.</string>
+    <string name="turnos_subtitulo_historial">Tus visitas anteriores, en un solo lugar</string>
+    <string name="turnos_tab_proximos">Proximos</string>
+    <string name="turnos_tab_historial">Historial</string>
+    <string name="turnos_seccion_proximos">PRÓXIMOS</string>
+    <string name="turnos_seccion_historial">ÚLTIMAS VISITAS</string>
+    <string name="turnos_seccion">%1$s · %2$s</string>
+
+    <plurals name="cantidad_turnos"><!-- para textos que cambian con la cantidad -->
+        <item quantity="one">%d turno</item>
+        <item quantity="other">%d turnos</item>
+    </plurals>
+    <string name="turnos_vacio_proximos">No tenés turnos próximos.</string>
+    <string name="turnos_vacio_historial">Todavía no tenés visitas.</string>
+    <string name="turnos_aviso_cancelacion">Podés cancelar sin cargo hasta 24 horas antes del turno. Pagás en la barbería.</string>
+    <string name="turnos_reservar_nuevo">Reservar nuevo turno</string>
+
+    <!-- Tarjeta de turno -->
+    <string name="turno_horario_duracion">%1$s · %2$d min</string>
+    <string name="estado_confirmado">Confirmado</string>
+    <string name="estado_completado">Completado</string>
+    <string name="estado_cancelado">Cancelado</string>
+    <string name="turno_cancelar">Cancelar turno</string>
+    <string name="turno_volver_a_reservar">Volver a reservar</string>
+    <!-- Diálogo cancelar turno -->
+    <string name="cancelar_titulo">¿Seguro que querés cancelar tu turno?</string>
+    <string name="cancelar_mensaje">Vas a liberar tu lugar. Si cambiás de idea, podés volver a reservar.</string>
+    <string name="cancelar_fecha_hora">%1$s · %2$s</string>
+    <string name="cancelar_barbero_duracion">Con %1$s · %2$d min</string>
+    <string name="cancelar_sin_cargo">Cancelación sin cargo</string>
+    <string name="cancelar_mantener">Mantener turno</string>
+
 
     <!-- Formatos con huecos: %1$ = primer argumento, %2$ = segundo; s = texto, d = número entero -->
     <string name="servicio_precio_duracion">$%1$d · %2$d min</string>

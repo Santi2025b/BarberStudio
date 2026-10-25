@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 
 // Título de una sección ("Servicios", "Productos") con la acción opcional de "Ver todo"
 @Composable
@@ -32,5 +34,17 @@ fun SeccionTitulo(
                 Text(text = accion, fontSize = 13.sp)
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun previwSeccionTitulo(){
+    BarberStudioTheme() {
+        SeccionTitulo(
+            titulo = "Servicios",
+            accion = "Ver todo",
+            onAccionClick = {}
+        )
     }
 }

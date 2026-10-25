@@ -9,5 +9,7 @@ data class Turno(
     val fecha: String,     // "Viernes, 16 de octubre"
     val horario: String,   // "10:00–10:45"
     val servicio: Servicio, // una data class puede tener adentro otra data class
-    val barbero: String
+    val barbero: String,
+
+    val estado: EstadoTurno = EstadoTurno.CONFIRMADO
 )
