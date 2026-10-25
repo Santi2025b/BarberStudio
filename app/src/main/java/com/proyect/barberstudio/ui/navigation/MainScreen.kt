@@ -25,9 +25,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.proyect.barberstudio.ui.screen.home.ProfileScreen
-
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import com.proyect.barberstudio.data.DatosDePrueba
 import com.proyect.barberstudio.ui.screen.home.InicioScreen
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.proyect.barberstudio.data.model.EstadoTurno
+import com.proyect.barberstudio.ui.screen.turnos.MisTurnosScreen
 
 // rutas del menu principal
 object MainRutas {
@@ -54,6 +59,17 @@ sealed class BottomBarItem(val ruta: String, val titulo: String, val icono: Imag
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    var turnosProximos by remember { mutableStateOf(DatosDePrueba.turnosProximos) }
+    var turnosPasados by remember { mutableStateOf(DatosDePrueba.turnosPasados) }
+    val irAReservar: () -> Unit = {
+        navController.navigate(MainRutas.RESERVAR) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
 
     //reserva un espacio exclusivo en la parte inferior para el bottomBar y provee un margen dinamico
     // para que los botonos no queden tapados
@@ -112,7 +128,9 @@ fun MainScreen() {
                     // "Reservar nuevo turno" va a la pestaña Reservar, igual que la barra de abajo
                     onReservarClick = {
                         navController.navigate(MainRutas.RESERVAR) {
-                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
                             launchSingleTop = true
                             restoreState = true
                         }
@@ -128,7 +146,18 @@ fun MainScreen() {
                 PlaceholderScreen("Pantalla de Reservar")
             }
             composable(MainRutas.MIS_TURNOS) {
-                PlaceholderScreen("Pantalla de Mis Turnos")
+                MisTurnosScreen(
+                    turnosProximos = turnosProximos,
+                    turnosPasados = turnosPasados,
+                    onCancelarTurno = { turno ->
+                        turnosProximos = turnosProximos - turno
+                        turnosPasados =
+                            listOf(turno.copy(estado = EstadoTurno.CANCELADO)) + turnosPasados
+                    },
+                    onVolverAReservar = { irAReservar() },
+                    onReservarClick = irAReservar,
+                    onNotificacionesClick = {}
+                )
             }
             composable(MainRutas.PERFIL) {
                 ProfileScreen() // Pantalla de perfil con UDF
