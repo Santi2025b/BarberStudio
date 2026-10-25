@@ -26,6 +26,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.proyect.barberstudio.ui.screen.home.ProfileScreen
 
+import com.proyect.barberstudio.data.DatosDePrueba
+import com.proyect.barberstudio.ui.screen.home.InicioScreen
+
 // rutas del menu principal
 object MainRutas {
     const val INICIO = "inicio"
@@ -96,12 +99,31 @@ fun MainScreen() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = MainRutas.PERFIL, // que muestre por defecto
+            startDestination = MainRutas.INICIO, // que muestre por defecto inicio
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(MainRutas.INICIO) {
-                PlaceholderScreen("Pantalla de Inicio")
+                // CAMBIO: la pantalla real de inicio, con los datos de prueba
+                InicioScreen(
+                    nombreUsuario = DatosDePrueba.NOMBRE_USUARIO,
+                    proximoTurno = DatosDePrueba.proximoTurno,
+                    servicios = DatosDePrueba.servicios,
+                    productos = DatosDePrueba.productos,
+                    // "Reservar nuevo turno" va a la pestaña Reservar, igual que la barra de abajo
+                    onReservarClick = {
+                        navController.navigate(MainRutas.RESERVAR) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onServicioClick = { },
+                    onProductoClick = { },
+                    onVerTodosProductos = { },
+                    onNotificacionesClick = { }
+                )
             }
+
             composable(MainRutas.RESERVAR) {
                 PlaceholderScreen("Pantalla de Reservar")
             }

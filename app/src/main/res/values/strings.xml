@@ -36,4 +36,22 @@
     <!-- Comunes -->
     <string name="continuar_google">Continuar con Google</string>
     <string name="cerrar">Cerrar</string>
+
+
+
+    <!-- Inicio -->
+    <string name="inicio_saludo">Hola, %1$s.</string>
+    <string name="inicio_subtitulo">Tu próximo corte, a un toque.</string>
+    <string name="inicio_proxima_visita">Tu próxima visita</string>
+    <string name="inicio_reservar">Reservar nuevo turno</string>
+    <string name="inicio_servicios">Servicios</string>
+    <string name="inicio_productos">Productos</string>
+    <string name="ver_todo">Ver todo</string>
+    <string name="notificaciones">Notificaciones</string>
+
+    <!-- Formatos con huecos: %1$ = primer argumento, %2$ = segundo; s = texto, d = número entero -->
+    <string name="servicio_precio_duracion">$%1$d · %2$d min</string>
+    <string name="precio">$%1$,d</string>
+    <string name="turno_servicio_precio">%1$s · $%2$d</string>
+    <string name="turno_con_barbero">Con %1$s</string>
 </resources>
