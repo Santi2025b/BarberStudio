@@ -88,4 +88,71 @@
     <string name="precio">$%1$,d</string>
     <string name="turno_servicio_precio">%1$s · $%2$d</string>
     <string name="turno_con_barbero">Con %1$s</string>
+
+    <!-- Reservar turno: comunes -->
+    <string name="reservar_titulo">Reservar turno</string>
+    <string name="volver">Volver</string>
+    <string name="paso_x_de_y">Paso %1$d de %2$d</string>
+    <string name="paso_fecha">Fecha</string>
+    <string name="paso_servicio">Servicio</string>
+    <string name="paso_barbero">Barbero</string>
+    <string name="paso_revision">Revisión</string>
+    <string name="paso_listo">Listo</string>
+    <string name="reservar_continuar">Continuar</string>
+    <string name="texto_con_punto">%1$s · %2$s</string>
+
+    <!-- Paso 1: fecha y hora -->
+    <string name="reservar_fecha_titulo">Seleccioná día y hora</string>
+    <string name="reservar_fecha_subtitulo">Elegí cuándo querés visitarnos.</string>
+    <string name="reservar_horario_estudio">Los horarios se muestran en la hora del estudio.</string>
+    <string-array name="dias_semana_corto">
+        <item>L</item>
+        <item>M</item>
+        <item>X</item>
+        <item>J</item>
+        <item>V</item>
+        <item>S</item>
+        <item>D</item>
+    </string-array>
+
+    <!-- Paso 2: servicio -->
+    <string name="reservar_servicio_titulo">¿Cuál es tu estilo?</string>
+    <string name="reservar_servicio_subtitulo">Cuidamos cada detalle de tu corte.</string>
+    <string name="reservar_duracion">%1$d min</string>
+    <string name="reservar_resumen_servicio">%1$s · %2$d min · $%3$d</string>
+
+    <!-- Paso 3: barbero -->
+    <string name="reservar_barbero_titulo">Estás en buenas manos</string>
+    <string name="reservar_barbero_subtitulo">Elegí tu barbero y encontrá tu estilo.</string>
+    <string name="reservar_cualquier_barbero">Cualquier barbero disponible</string>
+    <string name="reservar_cualquier_barbero_detalle">El mismo cuidado, con todo el equipo</string>
+    <string name="barbero_puntaje">★ %1$.1f · %2$d reseñas</string>
+
+    <!-- Paso 4: revisar -->
+    <string name="reservar_revisar_titulo">Todo listo, %1$s</string>
+    <string name="reservar_revisar_subtitulo">Revisá los detalles antes de confirmar tu lugar.</string>
+    <string name="reservar_tu_turno">Tu turno</string>
+    <string name="reservar_editar">Editar</string>
+    <string name="reservar_fecha_y_hora">Fecha y hora</string>
+    <string name="reservar_tu_barbero">Tu barbero</string>
+    <string name="reservar_duracion_precio">%1$d min · $%2$d</string>
+    <string name="reservar_cargo_reserva">Cargo por reserva</string>
+    <string name="reservar_total">Total</string>
+    <string name="precio_decimal">$%1$d,00</string>
+    <string name="reservar_notas_pregunta">¿Algo que debamos saber? (Opcional)</string>
+    <string name="campo_notas">Notas</string>
+    <string name="reservar_notas_placeholder">Preferencias de estilo o pedidos especiales</string>
+    <string name="reservar_aviso_pago">Pagás en el estudio. Cancelación sin cargo hasta 24 h antes.</string>
+    <string name="reservar_confirmar">Confirmar turno</string>
+
+    <!-- Paso 5: listo -->
+    <string name="reservar_listo_titulo">Tu turno está reservado</string>
+    <string name="reservar_listo_subtitulo">Nos vemos pronto, %1$s. Enviamos los detalles a tu correo.</string>
+    <string name="reservar_turno_confirmado">Turno confirmado</string>
+    <string name="reservar_estudio">Barber Studio · Estudio de barbería</string>
+    <string name="reservar_direccion">128 Spring St, New York</string>
+    <string name="reservar_ver_mis_turnos">Ver mis turnos</string>
+    <string name="reservar_volver_inicio">Volver al inicio</string>
+
+
 </resources>

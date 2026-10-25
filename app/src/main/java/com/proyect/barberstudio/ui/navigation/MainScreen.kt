@@ -16,6 +16,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,15 +27,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.proyect.barberstudio.ui.screen.home.ProfileScreen
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import com.proyect.barberstudio.data.DatosDePrueba
-import com.proyect.barberstudio.ui.screen.home.InicioScreen
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.proyect.barberstudio.data.model.EstadoTurno
+import com.proyect.barberstudio.ui.screen.home.InicioScreen
+import com.proyect.barberstudio.ui.screen.home.ProfileScreen
+import com.proyect.barberstudio.ui.screen.reservar.ReservarTurnoScreen
 import com.proyect.barberstudio.ui.screen.turnos.MisTurnosScreen
+
 
 // rutas del menu principal
 object MainRutas {
@@ -61,8 +62,11 @@ fun MainScreen() {
     val navController = rememberNavController()
     var turnosProximos by remember { mutableStateOf(DatosDePrueba.turnosProximos) }
     var turnosPasados by remember { mutableStateOf(DatosDePrueba.turnosPasados) }
-    val irAReservar: () -> Unit = {
-        navController.navigate(MainRutas.RESERVAR) {
+
+    //  ahora recibe la ruta, así sirve para ir a CUALQUIER pestaña (Reservar, Mis turnos, Inicio).
+    // Hace lo mismo que tocar un botón de la barra de abajo.
+    val irAPestana: (String) -> Unit = { ruta ->
+        navController.navigate(ruta) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
@@ -71,8 +75,7 @@ fun MainScreen() {
         }
     }
 
-    //reserva un espacio exclusivo en la parte inferior para el bottomBar y provee un margen dinamico
-    // para que los botonos no queden tapados
+
     Scaffold(
         bottomBar = {
             //contenedor principal visual de la franja inferior de la app
@@ -119,22 +122,15 @@ fun MainScreen() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(MainRutas.INICIO) {
-                // CAMBIO: la pantalla real de inicio, con los datos de prueba
+                //  la pantalla real de inicio, con los datos de prueba
                 InicioScreen(
                     nombreUsuario = DatosDePrueba.NOMBRE_USUARIO,
                     proximoTurno = DatosDePrueba.proximoTurno,
                     servicios = DatosDePrueba.servicios,
                     productos = DatosDePrueba.productos,
-                    // "Reservar nuevo turno" va a la pestaña Reservar, igual que la barra de abajo
-                    onReservarClick = {
-                        navController.navigate(MainRutas.RESERVAR) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
+                    // ANTES: onReservarClick = { navController.navigate(MainRutas.RESERVAR) { ... } },
+                    // CAMBIO C: lo mismo, con la función compartida
+                    onReservarClick = { irAPestana(MainRutas.RESERVAR) },
                     onServicioClick = { },
                     onProductoClick = { },
                     onVerTodosProductos = { },
@@ -143,7 +139,21 @@ fun MainScreen() {
             }
 
             composable(MainRutas.RESERVAR) {
-                PlaceholderScreen("Pantalla de Reservar")
+                ReservarTurnoScreen(
+                    nombreUsuario = DatosDePrueba.NOMBRE_USUARIO,
+                    servicios = DatosDePrueba.servicios,
+                    barberos = DatosDePrueba.barberos,
+                    horarios = DatosDePrueba.horarios,
+                    // Al confirmar: le damos un id nuevo y lo agregamos a Próximos.
+                    // Así aparece en Mis turnos (las listas viven acá, por eso se puede).
+                    onTurnoConfirmado = { turno ->
+                        // El id más grande que exista + 1. maxOfOrNull da null si no hay ninguno, y ?: 0 lo cubre.
+                        val nuevoId = ((turnosProximos + turnosPasados).maxOfOrNull { it.id } ?: 0) + 1
+                        turnosProximos = turnosProximos + turno.copy(id = nuevoId)
+                    },
+                    onVerMisTurnos = { irAPestana(MainRutas.MIS_TURNOS) },
+                    onVolverAlInicio = { irAPestana(MainRutas.INICIO) }
+                )
             }
             composable(MainRutas.MIS_TURNOS) {
                 MisTurnosScreen(
@@ -154,8 +164,9 @@ fun MainScreen() {
                         turnosPasados =
                             listOf(turno.copy(estado = EstadoTurno.CANCELADO)) + turnosPasados
                     },
-                    onVolverAReservar = { irAReservar() },
-                    onReservarClick = irAReservar,
+                    // irAPestana necesita la ruta, así que va adentro de una lambda
+                    onVolverAReservar = { irAPestana(MainRutas.RESERVAR) },
+                    onReservarClick = { irAPestana(MainRutas.RESERVAR) },
                     onNotificacionesClick = {}
                 )
             }
@@ -166,10 +177,3 @@ fun MainScreen() {
     }
 }
 
-// pantalla temporal para llenar las vistas que todavía no hicimos
-@Composable
-fun PlaceholderScreen(text: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = text, style = MaterialTheme.typography.titleLarge)
-    }
-}
