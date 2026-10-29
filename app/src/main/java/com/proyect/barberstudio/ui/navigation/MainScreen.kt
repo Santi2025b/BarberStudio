@@ -22,6 +22,7 @@ import com.proyect.barberstudio.data.DatosDePrueba
 import com.proyect.barberstudio.data.model.EstadoTurno
 import com.proyect.barberstudio.ui.screen.home.InicioScreen
 import com.proyect.barberstudio.ui.screen.home.ProfileScreen
+import com.proyect.barberstudio.ui.screen.reservar.ReservarTurnoScreen
 import com.proyect.barberstudio.ui.screen.turnos.MisTurnosScreen
 import kotlinx.serialization.Serializable
 
@@ -120,7 +121,15 @@ fun MainScreen() {
                 }
 
                 entry<MainRouteReservar> {
-                    PlaceholderScreen("Pantalla de Reservar")
+                    ReservarTurnoScreen(
+                        nombreUsuario = DatosDePrueba.NOMBRE_USUARIO,
+                        servicios = DatosDePrueba.servicios,
+                        barberos = DatosDePrueba.barberos,
+                        horarios = DatosDePrueba.horarios,
+                        onTurnoConfirmado = {},
+                        onVerMisTurnos = {},
+                        onVolverAlInicio = {}
+                    )
                 }
 
                 entry<MainRouteMisTurnos> {
