@@ -2,10 +2,6 @@ package com.proyect.barberstudio.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.dropUnlessResumed
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -14,6 +10,8 @@ import com.proyect.barberstudio.ui.screen.auth.LoginScreen
 import com.proyect.barberstudio.ui.screen.auth.RegisterScreen
 import com.proyect.barberstudio.ui.screen.home.ProfileScreen
 import kotlinx.serialization.Serializable
+
+
 object Rutas {
     const val LOGIN = "login"
     const val REGISTRO = "registro"
@@ -27,6 +25,7 @@ data object RouteRegistro : NavKey
 
 @Serializable
 data object RouteMain : NavKey
+
 @Composable
 fun AppNavigation() {
     val backStack = rememberNavBackStack(RouteLogin)
