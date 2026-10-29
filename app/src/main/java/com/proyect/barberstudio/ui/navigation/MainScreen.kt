@@ -31,8 +31,14 @@ import com.proyect.barberstudio.data.DatosDePrueba
 import com.proyect.barberstudio.ui.screen.home.InicioScreen
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import com.proyect.barberstudio.data.model.EstadoTurno
 import com.proyect.barberstudio.ui.screen.turnos.MisTurnosScreen
+import kotlinx.serialization.Serializable
 
 // rutas del menu principal
 object MainRutas {
@@ -42,12 +48,24 @@ object MainRutas {
     const val PERFIL = "perfil"
 }
 
+@Serializable
+data object MainRouteInicio : NavKey
+
+@Serializable
+data object MainRouteReservar : NavKey
+
+@Serializable
+data object MainRouteMisTurnos : NavKey
+
+@Serializable
+data object MainRoutePerfil : NavKey
+
 // elementos de la barra de navegacion
-sealed class BottomBarItem(val ruta: String, val titulo: String, val icono: ImageVector) {
-    object Inicio : BottomBarItem(MainRutas.INICIO, "Inicio", Icons.Default.Home)
-    object Reservar : BottomBarItem(MainRutas.RESERVAR, "Reservar", Icons.Default.DateRange)
-    object MisTurnos : BottomBarItem(MainRutas.MIS_TURNOS, "Mis turnos", Icons.Default.AccessTime)
-    object Perfil : BottomBarItem(MainRutas.PERFIL, "Perfil", Icons.Default.Person)
+sealed class BottomBarItem(val key: NavKey, val titulo: String, val icono: ImageVector) {
+    object Inicio : BottomBarItem(MainRouteInicio, "Inicio", Icons.Default.Home)
+    object Reservar : BottomBarItem(MainRouteReservar, "Reservar", Icons.Default.DateRange)
+    object MisTurnos : BottomBarItem(MainRouteMisTurnos, "Mis turnos", Icons.Default.AccessTime)
+    object Perfil : BottomBarItem(MainRoutePerfil, "Perfil", Icons.Default.Person)
 
     //se agrupa esos botones en una lista para usar un bucle foreach mas abajo
     companion object {
@@ -58,16 +76,16 @@ sealed class BottomBarItem(val ruta: String, val titulo: String, val icono: Imag
 //contenedor base
 @Composable
 fun MainScreen() {
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack(MainRouteInicio)
     var turnosProximos by remember { mutableStateOf(DatosDePrueba.turnosProximos) }
     var turnosPasados by remember { mutableStateOf(DatosDePrueba.turnosPasados) }
-    val irAReservar: () -> Unit = {
-        navController.navigate(MainRutas.RESERVAR) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
+
+    // funcion para ir a reservar sin acumular pantallas
+    val irAReservar = dropUnlessResumed {
+        if (backStack.lastOrNull() != MainRouteReservar) {
+            backStack.clear()
+            backStack.add(MainRouteInicio)
+            backStack.add(MainRouteReservar)
         }
     }
 
@@ -80,11 +98,9 @@ fun MainScreen() {
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface
             ) {
-                //observa en tiempo real en que pantalla esta el usuario
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                //Esta línea averigua exactamente en que pantalla esta parado el usuario en este instante
-                val currentRoute = navBackStackEntry?.destination?.route
 
+                //averiguamos cual es la pantalla activa mirando el ultimo elemento de la pila
+                val currentKey = backStack.lastOrNull()
 
                 BottomBarItem.items.forEach { item ->
                     //es el boton individual que se construye en cada vuelta del bucle
@@ -93,19 +109,15 @@ fun MainScreen() {
                         label = { Text(item.titulo) },
                         //Compara la ubicación actual con la ruta de cada botón. Si coinciden, Compose
                         // ilumina y resalta ese botón
-                        selected = currentRoute == item.ruta,
+                        selected = currentKey == item.key,
                         onClick = {
-                            //evita que la app colapse la memoria RAM si el usuario toca las pestañas compulsivamente
-                            if (currentRoute != item.ruta) {
-                                navController.navigate(item.ruta) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    //evita que se abran copias duplicadas de una misma pantalla si presiona el mismo btn varias veces rapido.
-                                    launchSingleTop = true
-                                    //Recupera el estado guardado si me voy a otra pantalla y vuelvo sigue marcando en la mimsa parte donde quede con el scroll
-                                    restoreState = true
+                            if (currentKey != item.key) {
+                                //limpiamos la pila e insertamos la nueva pestana elegida
+                                backStack.clear()
+                                if (item.key != MainRouteInicio) {
+                                    backStack.add(MainRouteInicio)
                                 }
+                                backStack.add(item.key)
                             }
                         }
                     )
@@ -113,56 +125,48 @@ fun MainScreen() {
             }
         }
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = MainRutas.INICIO, // que muestre por defecto inicio
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(MainRutas.INICIO) {
-                // CAMBIO: la pantalla real de inicio, con los datos de prueba
-                InicioScreen(
-                    nombreUsuario = DatosDePrueba.NOMBRE_USUARIO,
-                    proximoTurno = DatosDePrueba.proximoTurno,
-                    servicios = DatosDePrueba.servicios,
-                    productos = DatosDePrueba.productos,
-                    // "Reservar nuevo turno" va a la pestaña Reservar, igual que la barra de abajo
-                    onReservarClick = {
-                        navController.navigate(MainRutas.RESERVAR) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    onServicioClick = { },
-                    onProductoClick = { },
-                    onVerTodosProductos = { },
-                    onNotificacionesClick = { }
-                )
-            }
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.removeLastOrNull() },
+            modifier = Modifier.padding(innerPadding),
+            entryProvider = entryProvider {
+                entry<MainRouteInicio> {
+                    InicioScreen(
+                        nombreUsuario = DatosDePrueba.NOMBRE_USUARIO,
+                        proximoTurno = DatosDePrueba.proximoTurno,
+                        servicios = DatosDePrueba.servicios,
+                        productos = DatosDePrueba.productos,
+                        onReservarClick = irAReservar,
+                        onServicioClick = { },
+                        onProductoClick = { },
+                        onVerTodosProductos = { },
+                        onNotificacionesClick = { }
+                    )
+                }
+                entry<MainRouteReservar> {
+                    PlaceholderScreen("Pantala reservar")
+                }
 
-            composable(MainRutas.RESERVAR) {
-                PlaceholderScreen("Pantalla de Reservar")
+                entry<MainRouteMisTurnos> {
+                    MisTurnosScreen(
+                        turnosProximos = turnosProximos,
+                        turnosPasados = turnosPasados,
+                        onCancelarTurno = { turno ->
+                            turnosProximos = turnosProximos - turno
+                            turnosPasados =
+                                listOf(turno.copy(estado = EstadoTurno.CANCELADO)) + turnosPasados
+                        },
+                        onVolverAReservar = { irAReservar() },
+                        onReservarClick = irAReservar,
+                        onNotificacionesClick = {}
+                    )
+                }
+
+                entry<MainRoutePerfil> {
+                    ProfileScreen()
+                }
             }
-            composable(MainRutas.MIS_TURNOS) {
-                MisTurnosScreen(
-                    turnosProximos = turnosProximos,
-                    turnosPasados = turnosPasados,
-                    onCancelarTurno = { turno ->
-                        turnosProximos = turnosProximos - turno
-                        turnosPasados =
-                            listOf(turno.copy(estado = EstadoTurno.CANCELADO)) + turnosPasados
-                    },
-                    onVolverAReservar = { irAReservar() },
-                    onReservarClick = irAReservar,
-                    onNotificacionesClick = {}
-                )
-            }
-            composable(MainRutas.PERFIL) {
-                ProfileScreen() // Pantalla de perfil con UDF
-            }
-        }
+        )
     }
 }
 

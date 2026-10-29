@@ -1,52 +1,67 @@
 package com.proyect.barberstudio.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import com.proyect.barberstudio.ui.screen.auth.LoginScreen
 import com.proyect.barberstudio.ui.screen.auth.RegisterScreen
 import com.proyect.barberstudio.ui.screen.home.ProfileScreen
-
+import kotlinx.serialization.Serializable
 object Rutas {
     const val LOGIN = "login"
     const val REGISTRO = "registro"
     const val MAIN = "main" // ruta que contiene la app principal
 }
+@Serializable
+data object RouteLogin : NavKey
 
+@Serializable
+data object RouteRegistro : NavKey
+
+@Serializable
+data object RouteMain : NavKey
 @Composable
 fun AppNavigation() {
-    val navController = rememberNavController()
+    val backStack = rememberNavBackStack(RouteLogin)
 
-    NavHost(
-        navController = navController,
-        startDestination = Rutas.LOGIN
-    ) {
-        //empieza en el login
-        // registra pantalla de login
-        composable(Rutas.LOGIN) {
-            LoginScreen(
-                onLoginClick = {
-                    // uso popUpTo para borrar el login del stack de pantallas
-                    navController.navigate(Rutas.MAIN){
-                        popUpTo(Rutas.LOGIN) { inclusive = true }
-                    }
-                },
-                onNavigateToRegister = { navController.navigate(Rutas.REGISTRO) },
-                onForgotPasswordClick = { }
-            )
-        }
+    NavDisplay(
+        backStack = backStack,
+        onBack = {backStack.removeLastOrNull()},
+        entryProvider = entryProvider {
+            //entrada para login
+            entry<RouteLogin> {
+                LoginScreen(
+                    onLoginClick = dropUnlessResumed{
+                        //limpiamos el login e ingresamos la pantalla principal
+                        backStack.clear()
+                        backStack.add(RouteMain)
+                    },
+                    onNavigateToRegister = dropUnlessResumed() {
+                        backStack.add(RouteRegistro)
+                    },
+                    onForgotPasswordClick = {}
+                )
+            }
 
-        //registra pantalla de registro
-        composable(Rutas.REGISTRO) {
-            RegisterScreen(
-                onRegistered = { navController.popBackStack() },
-                onClose = { navController.popBackStack() }
-            )
-        }
+            //entrada para registro
+            entry<RouteRegistro> {
+                RegisterScreen(
+                    onRegistered = {backStack.removeLastOrNull()},
+                    onClose = {backStack.removeLastOrNull()}
+                )
+            }
 
-        composable(Rutas.MAIN) {
-            MainScreen()
+            //entrada para el main q es la pantalla principal
+            entry<RouteMain> {
+                MainScreen()
+            }
         }
-    }
+    )
 }
