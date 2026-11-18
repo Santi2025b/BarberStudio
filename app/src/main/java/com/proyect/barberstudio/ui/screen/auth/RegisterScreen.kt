@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proyect.barberstudio.R
 import com.proyect.barberstudio.ui.components.AppTextField // NUEVO: nuestro componente
 import com.proyect.barberstudio.ui.theme.BarberStudioTheme
@@ -25,15 +26,36 @@ import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 @Composable
 fun RegisterScreen(
     onRegistered: () -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    viewModel: RegisterViewModel = viewModel()
 ) {
-    var nombre by remember { mutableStateOf("") }
-    var telefono by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    // ANTES: var passwordVisible by remember { mutableStateOf(false) }
-    // CAMBIO: el estado del ojito vive dentro de AppTextField.
+    val uiState by viewModel.uiState.collectAsState()
 
+    RegisterContent(
+        uiState = uiState,
+        onRegistered = {
+            if(viewModel.validar()){
+                onRegistered
+            }
+        },
+        onClose = onClose,
+        onEmailChange = viewModel::onEmailChange,
+        onNombreChange = viewModel::onNombreChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onTelefonoChange = viewModel::onTelefonoChange
+    )
+}
+
+@Composable
+fun RegisterContent(
+    uiState: RegisterUiState,
+    onRegistered: () -> Unit,
+    onClose: () -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onNombreChange: (String) -> Unit,
+    onTelefonoChange: (String) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,20 +118,15 @@ fun RegisterScreen(
             // Botón de la X para cerrar
             IconButton(onClick = onClose) {
                 // ANTES: Icon(imageVector = Icons.Default.Close, contentDescription = "Cerrar")
-                Icon(imageVector = Icons.Default.Close, contentDescription = stringResource(R.string.cerrar))
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.cerrar)
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        //SUBTITULO
-        // ANTES:
-        // Text(
-        //     text = "Completa los campos con tu información",
-        //     color = Color.Gray,
-        //     fontSize = 14.sp
-        // )
-        // CAMBIO: texto a strings.xml y el gris pasa a ser "onSurfaceVariant".
         Text(
             text = stringResource(R.string.registro_subtitulo),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -118,94 +135,48 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        //CAMPOS DE TEXTO
-        // ANTES (nombre, 3 piezas):
-        // Text(text = "Nombre", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        // Spacer(modifier = Modifier.height(4.dp))
-        // OutlinedTextField(
-        //     value = nombre,
-        //     onValueChange = { nombre = it },
-        //     placeholder = { Text("Matias Rojas", color = Color.LightGray) },
-        //     modifier = Modifier.fillMaxWidth(),
-        //     shape = RoundedCornerShape(12.dp),
-        //     colors = OutlinedTextFieldDefaults.colors(
-        //         focusedTextColor = Color.Black,
-        //         unfocusedTextColor = Color.Black
-        //     )
-        // )
-        // CAMBIO: un solo AppTextField. El título pasa a ser el "label" (en el borde, como en el Figma).
-        // No le pasamos keyboardType porque el valor por defecto (KeyboardType.Text)
         AppTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
+            value = uiState.nombre,
+            onValueChange = onNombreChange,
             label = stringResource(R.string.campo_nombre),
-            placeholder = stringResource(R.string.ejemplo_nombre)
+            placeholder = stringResource(R.string.ejemplo_nombre),
+            keyboardType = KeyboardType.Text,
+            //si hay error, convertimos el ID (Int) en texto. Si es null, let no se ejecuta y queda null.
+            error = uiState.nombreError?.let { stringResource(it) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ANTES (teléfono):
-        // Text(text = "Telefono", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        // Spacer(modifier = Modifier.height(4.dp))
-        // OutlinedTextField(
-        //     value = telefono,
-        //     onValueChange = { telefono = it },
-        //     placeholder = { Text("+54 9 123 456-1289", color = Color.LightGray) },
-        //     modifier = Modifier.fillMaxWidth(),
-        //     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone), // Teclado numérico
-        //     shape = RoundedCornerShape(12.dp),
-        //     colors = OutlinedTextFieldDefaults.colors(
-        //         focusedTextColor = Color.Black,
-        //         unfocusedTextColor = Color.Black
-        //     )
-        // )
-        // CAMBIO: AppTextField con KeyboardType.Phone, que sigue abriendo el teclado numérico.
         AppTextField(
-            value = telefono,
-            onValueChange = { telefono = it },
+            value = uiState.telefono,
+            onValueChange = onTelefonoChange,
             label = stringResource(R.string.campo_telefono),
             placeholder = stringResource(R.string.ejemplo_telefono),
-            keyboardType = KeyboardType.Phone
+            keyboardType = KeyboardType.Phone,
+            //si hay error, convertimos el ID (Int) en texto. Si es null, let no se ejecuta y queda null.
+            error = uiState.telefonoError?.let { stringResource(it) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ANTES (email):
-        // Text(text = "Correo electrónico", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        // Spacer(modifier = Modifier.height(4.dp))
-        // OutlinedTextField(
-        //     value = email,
-        //     onValueChange = { email = it },
-        //     placeholder = { Text("alex.morgan@email.com", color = Color.LightGray) },
-        //     modifier = Modifier.fillMaxWidth(),
-        //     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        //     shape = RoundedCornerShape(12.dp),
-        //     colors = OutlinedTextFieldDefaults.colors(
-        //         focusedTextColor = Color.Black,
-        //         unfocusedTextColor = Color.Black
-        //     )
-        // )
-        // CAMBIO: AppTextField con teclado de email.
         AppTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = uiState.email,
+            onValueChange = onEmailChange,
             label = stringResource(R.string.campo_email),
             placeholder = stringResource(R.string.ejemplo_email),
-            keyboardType = KeyboardType.Email
+            keyboardType = KeyboardType.Email,
+            error = uiState.emailError?.let { stringResource(it) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ANTES (contraseña, con la lógica del icono de ojito):
-
-        // CAMBIO: esPassword = true y AppTextField hace todo lo del ojito.
-        // escrita una sola vez en el componente.
         AppTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = uiState.password,
+            onValueChange = onPasswordChange,
             label = stringResource(R.string.campo_contrasena),
             keyboardType = KeyboardType.Password,
-            esPassword = true
+            esPassword = true,
+            error = uiState.passwordError?.let { stringResource(it) }
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -216,13 +187,13 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            // ANTES: colors = ButtonDefaults.buttonColors(containerColor = BtnColor),
-            // CAMBIO: se borró ca,po color. Button usa "primary" del tema por defecto, y primary es el azul del Figma.
             shape = RoundedCornerShape(12.dp)
         ) {
-            // ANTES: Text(text = "Crear Cuenta", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            // CAMBIO: texto a strings.xml. El blanco del texto lo pone el tema ("onPrimary").
-            Text(text = stringResource(R.string.registro_boton), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(
+                text = stringResource(R.string.registro_boton),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -234,8 +205,6 @@ fun RegisterScreen(
                 .height(52.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            // ANTES: Text(text = "G   Continuar con Google", color = Color.Black, fontWeight = FontWeight.Bold)
-            // cambio:La "G" queda aparte porque es un ícono provisorio hasta poner el logo de Google.
             Text(
                 text = "G   " + stringResource(R.string.continuar_google),
                 color = MaterialTheme.colorScheme.onSurface,
@@ -249,6 +218,14 @@ fun RegisterScreen(
 @Composable
 fun RegisterScreenPreview() {
     BarberStudioTheme {
-        RegisterScreen(onRegistered = {}, onClose = {})
+        RegisterContent(
+            uiState = RegisterUiState(),
+            onRegistered = {},
+            onClose = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onNombreChange = {},
+            onTelefonoChange = {}
+        )
     }
 }
