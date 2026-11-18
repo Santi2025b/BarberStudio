@@ -22,6 +22,10 @@
     <string name="registro_subtitulo">Completá los campos con tu información.</string>
     <string name="registro_boton">Crear cuenta</string>
 
+    <string name="error_nombre_vacio">Ingresá tu nombre.</string>
+    <string name="error_nombre_corto">El nombre tiene que tener al menos 2 caracteres. .</string>
+    <string name="error_telefono_invalido">El telefono tiene que tener al menos 8 caracteres.</string>
+
     <!-- Campos de texto  -->
     <string name="campo_nombre">Nombre</string>
     <string name="campo_telefono">Teléfono</string>
