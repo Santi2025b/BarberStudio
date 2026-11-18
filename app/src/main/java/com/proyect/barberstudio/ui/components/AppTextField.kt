@@ -28,6 +28,7 @@ import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 /**
  * Componente de campo de texto
  * Si esPassword = true, oculta el texto y muestra el botón del ojito.
+ * Si error no es null, el campo se pone rojo y muestra el mensaje abajo.
  */
 @Composable
 fun AppTextField(
@@ -37,7 +38,8 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     keyboardType: KeyboardType = KeyboardType.Text,
-    esPassword: Boolean = false
+    esPassword: Boolean = false,
+    error: String? = null
 ) {
     // Estado interno: solo le importa a este campo, nadie de afuera necesita saberlo
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -51,6 +53,15 @@ fun AppTextField(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        //isError pinta el borde y el label con el color "error" del tema (rojo).
+        isError = error != null,
+        //supportingText es el textito chico que va DEBAJO del campo.
+        // Mismo truco que trailingIcon: si hay error le pasamos un composable, si no, null (no se dibuja nada).
+        supportingText = if (error != null) {
+            { Text(error) }
+        } else {
+            null
+        },
         visualTransformation = if (esPassword && !passwordVisible) {
             PasswordVisualTransformation()
         } else {
@@ -78,5 +89,18 @@ fun AppTextField(
 fun AppTextFieldPreview() {
     BarberStudioTheme {
         AppTextField(value = "", onValueChange = {}, label = "Contraseña", esPassword = true)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AppTextFieldErrorPreview() {
+    BarberStudioTheme {
+        AppTextField(
+            value = "carlos@",
+            onValueChange = {},
+            label = "Correo electrónico",
+            error = "El correo no es válido."
+        )
     }
 }

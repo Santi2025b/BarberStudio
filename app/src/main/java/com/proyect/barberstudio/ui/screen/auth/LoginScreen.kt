@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel // NUEVO: para pedir el ViewModel
 import com.proyect.barberstudio.R
 import com.proyect.barberstudio.ui.components.AppTextField
 import com.proyect.barberstudio.ui.theme.BarberStudioTheme
@@ -25,16 +26,42 @@ import com.proyect.barberstudio.ui.theme.BarberStudioTheme
 fun LoginScreen(
     onLoginClick: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
+    //viewModel() busca el LoginViewModel que ya existe, o lo crea la primera vez.
+    // Tiene valor por defecto, así que AppNavigation no tiene que pasarlo.
+    viewModel: LoginViewModel = viewModel()
+) {
+    // collectAsState() convierte el StateFlow en un estado de Compose: cuando cambia, la pantalla se redibuja sola.
+    val uiState by viewModel.uiState.collectAsState()
+
+    LoginContent(
+        uiState = uiState,
+        onEmailChange = viewModel::onEmailChange,       // referencia a la función
+        onPasswordChange = viewModel::onPasswordChange,
+        // solo navegamos si el ViewModel dice que está todo bien.
+        onLoginClick = {
+            if (viewModel.validar()) {
+                onLoginClick()
+            }
+        },
+        onNavigateToRegister = onNavigateToRegister,
+        onForgotPasswordClick = onForgotPasswordClick
+    )
+}
+
+//recibe todo de afuera.
+@Composable
+fun LoginContent(
+    uiState: LoginUiState,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
+    onNavigateToRegister: () -> Unit,
     onForgotPasswordClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            // ANTES: .background(Color.White)
-            // CAMBIO: Color.White es blanco siempre. "background" es blanco en modo claro y oscuro en modo oscuro.
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 24.dp, vertical = 48.dp)
     ) {
@@ -46,20 +73,13 @@ fun LoginScreen(
         ){
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                // ANTES: color = Color(0xFF1E1E1E),
-                // CAMBIO: la caja del logo usa el color del texto principal (casi negro en modo claro,
-                // casi blanco en modo oscuro). siempre resalta sobre el fondo.
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(48.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_scissors),
-                        // ANTES: contentDescription = "Logo Barberia",
-                        // CAMBIO: este texto lo lee TalkBack (lector de pantalla), así que también va en strings.xml.
                         contentDescription = stringResource(R.string.logo_descripcion),
-                        // ANTES: tint = Color.White,
-                        // CAMBIO: la tijera usa el color del fondo, o sea lo contrario de la caja. Siempre contrasta.
                         tint = MaterialTheme.colorScheme.background,
                         modifier = Modifier.size(24.dp)
                     )
@@ -67,8 +87,6 @@ fun LoginScreen(
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                // ANTES: Text(text = "INICIO DE SESION", fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
-                // CAMBIO: el texto sale de strings.xml (login_titulo),  puede traducir o cambiar en un solo lugar.
                 Text(text = stringResource(R.string.login_titulo), fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
                 Text(
                     text = stringResource(R.string.marca_nombre),
@@ -106,67 +124,25 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         //CAMPOS DE TEXTO
-        // ANTES:
-        // Text(text = "Correo electrónico", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        // Spacer(modifier = Modifier.height(4.dp))
-        // OutlinedTextField(
-        //     value = email,
-        //     onValueChange = { email = it },
-        //     placeholder = { Text("tuEmail@email.com", color = Color.LightGray) },
-        //     modifier = Modifier.fillMaxWidth(),
-        //     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        //     shape = RoundedCornerShape(12.dp),
-        //     colors = OutlinedTextFieldDefaults.colors(
-        //         focusedTextColor = Color.Black,
-        //         unfocusedTextColor = Color.Black
-        //     )
-        // )
-
-        // CAMBIO: todo eso ahora es un solo AppTextField.
-        // - El título "Correo electrónico" pasa a ser el "label", que va en el borde del campo como en el Figma.
-        // - La forma redondeada, el ancho completo y el teclado los resuelve el componente.
-        // - Ya no hace falta forzar Color.Black: ahora lomtoma por defecto de el tema .
-        // - La pantalla sigue guardando el email (state hoisting): el componente solo lo muestra y avisa cambios.
         AppTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = uiState.email,
+            onValueChange = onEmailChange,
             label = stringResource(R.string.campo_email),
             placeholder = stringResource(R.string.ejemplo_email),
-            keyboardType = KeyboardType.Email
+            keyboardType = KeyboardType.Email,
+            //si hay error, convertimos el ID (Int) en texto. Si es null, let no se ejecuta y queda null.
+            error = uiState.emailError?.let { stringResource(it) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ANTES (contraseña, 3 piezas más la lógica del ojito):
-        // Text(text = "Contraseña", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        // Spacer(modifier = Modifier.height(4.dp))
-        // OutlinedTextField(
-        //     value = password,
-        //     onValueChange = { password = it },
-        //     placeholder = { Text("••••••••", color = Color.LightGray) },
-        //     modifier = Modifier.fillMaxWidth(),
-        //     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        //     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        //     trailingIcon = {
-        //         val icon = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-        //         IconButton(onClick = { passwordVisible = !passwordVisible }) {
-        //             Icon(imageVector = icon, contentDescription = "Ver password")
-        //         }
-        //     },
-        //     shape = RoundedCornerShape(12.dp),
-        //     colors = OutlinedTextFieldDefaults.colors(
-        //         focusedTextColor = Color.Black,
-        //         unfocusedTextColor = Color.Black
-        //     )
-        // )
-        // CAMBIO: con esPassword = true, AppTextField oculta el texto y pone el ojito él solo.
-        // Esa lógica ahora está escrita una sola vez (en el componente) y la reusan Login y Register.
         AppTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = uiState.password,
+            onValueChange = onPasswordChange,
             label = stringResource(R.string.campo_contrasena),
             keyboardType = KeyboardType.Password,
-            esPassword = true
+            esPassword = true,
+            error = uiState.passwordError?.let { stringResource(it) } // NUEVO
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -194,12 +170,8 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            // ANTES: colors = ButtonDefaults.buttonColors(containerColor = BtnColor),
-            // CAMBIO: se borró la línea. Button usa por defecto el color "primary" del tema,
             shape = RoundedCornerShape(12.dp)
         ) {
-            // ANTES: Text(text = "Iniciar sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            // CAMBIO: el texto va a strings.xml. El color blanco del texto lo pone el tema solo ("onPrimary").
             Text(text = stringResource(R.string.login_boton), fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
 
@@ -212,9 +184,6 @@ fun LoginScreen(
                 .height(52.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            // ANTES: Text(text = "G   Continuar con Google", color = Color.Black, fontWeight = FontWeight.Bold)
-            // CAMBIO: el texto va a strings.xml. Color.Black no se vería en modo oscuro, así que pasa a "onSurface"
-
             Text(
                 text = "G   " + stringResource(R.string.continuar_google),
                 color = MaterialTheme.colorScheme.onSurface,
@@ -225,8 +194,6 @@ fun LoginScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         //TEXTO FINAL
-        // CAMBIO: antes había un TextButton DENTRO de otro TextButton.
-        // Ahora es una Row con un texto común (gris) y un solo botón: solo "Crear cuenta" es clickeable.
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -253,7 +220,30 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     BarberStudioTheme {
-        LoginScreen(
+        LoginContent(
+            uiState = LoginUiState(),
+            onEmailChange = {},
+            onPasswordChange = {},
+            onLoginClick = {},
+            onNavigateToRegister = {},
+            onForgotPasswordClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenErrorPreview() {
+    BarberStudioTheme {
+        LoginContent(
+            uiState = LoginUiState(
+                email = "carlos@",
+                password = "123",
+                emailError = R.string.error_email_invalido,
+                passwordError = R.string.error_contrasena_corta
+            ),
+            onEmailChange = {},
+            onPasswordChange = {},
             onLoginClick = {},
             onNavigateToRegister = {},
             onForgotPasswordClick = {}

@@ -33,6 +33,11 @@
     <string name="mostrar_contrasena">Mostrar contraseña</string>
     <string name="ocultar_contrasena">Ocultar contraseña</string>
 
+    <string name="error_email_vacio">Ingresá tu correo electrónico.</string>
+    <string name="error_email_invalido">El correo no es válido. Revisá que tenga @ y un dominio, por ejemplo gmail.com.</string>
+    <string name="error_contrasena_vacia">Ingresá tu contraseña.</string>
+    <string name="error_contrasena_corta">La contraseña tiene que tener al menos 6 caracteres.</string>
+
     <!-- Comunes -->
     <string name="continuar_google">Continuar con Google</string>
     <string name="cerrar">Cerrar</string>
@@ -51,8 +56,8 @@
     <!-- Turnos -->
     <string name="turnos_titulo">Mis turnos</string>
     <string name="turnos_subtitulo_proximos">Tu próximo cambio de look, a un toque.</string>
-    <string name="turnos_subtitulo_historial">Tus visitas anteriores, en un solo lugar</string>
-    <string name="turnos_tab_proximos">Proximos</string>
+    <string name="turnos_subtitulo_historial">Tus visitas anteriores, en un solo lugar.</string>
+    <string name="turnos_tab_proximos">Próximos</string>
     <string name="turnos_tab_historial">Historial</string>
     <string name="turnos_seccion_proximos">PRÓXIMOS</string>
     <string name="turnos_seccion_historial">ÚLTIMAS VISITAS</string>
