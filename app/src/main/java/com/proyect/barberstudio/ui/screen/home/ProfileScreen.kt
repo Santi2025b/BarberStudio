@@ -44,6 +44,8 @@ import com.proyect.barberstudio.ui.screen.profile.ProfileUiEvent
 import com.proyect.barberstudio.ui.screen.profile.ProfileUiState
 import com.proyect.barberstudio.ui.screen.profile.ProfileViewModel
 import java.nio.file.WatchEvent
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun ProfileScreen(
@@ -76,6 +78,7 @@ fun ProfileElements( //Stateless View sin estado
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .verticalScroll(rememberScrollState()) // deja deslizar la pantalla
             .padding(horizontal = 24.dp, vertical = 24.dp)
     ) {
         Row(
@@ -206,7 +209,8 @@ fun ProfileElements( //Stateless View sin estado
                 )
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Row(
             modifier = Modifier
