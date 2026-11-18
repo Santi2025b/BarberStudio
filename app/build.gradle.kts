@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization) // NUEVO
 }
 
 android {
@@ -55,5 +56,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.kotlinx.serialization.json) // si ya tenías la línea con .core, cambiala por esta
     implementation(libs.androidx.compose.material.icons.extended)
 }
