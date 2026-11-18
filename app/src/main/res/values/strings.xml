@@ -22,6 +22,10 @@
     <string name="registro_subtitulo">Completá los campos con tu información.</string>
     <string name="registro_boton">Crear cuenta</string>
 
+    <string name="error_nombre_vacio">Ingresá tu nombre.</string>
+    <string name="error_nombre_corto">El nombre tiene que tener al menos 2 caracteres. .</string>
+    <string name="error_telefono_invalido">El telefono tiene que tener al menos 8 caracteres.</string>
+
     <!-- Campos de texto  -->
     <string name="campo_nombre">Nombre</string>
     <string name="campo_telefono">Teléfono</string>
@@ -32,6 +36,11 @@
     <string name="ejemplo_email">carlos.tevez@gmail.com</string>
     <string name="mostrar_contrasena">Mostrar contraseña</string>
     <string name="ocultar_contrasena">Ocultar contraseña</string>
+
+    <string name="error_email_vacio">Ingresá tu correo electrónico.</string>
+    <string name="error_email_invalido">El correo no es válido. Revisá que tenga @ y un dominio, por ejemplo gmail.com.</string>
+    <string name="error_contrasena_vacia">Ingresá tu contraseña.</string>
+    <string name="error_contrasena_corta">La contraseña tiene que tener al menos 6 caracteres.</string>
 
     <!-- Comunes -->
     <string name="continuar_google">Continuar con Google</string>
@@ -51,8 +60,8 @@
     <!-- Turnos -->
     <string name="turnos_titulo">Mis turnos</string>
     <string name="turnos_subtitulo_proximos">Tu próximo cambio de look, a un toque.</string>
-    <string name="turnos_subtitulo_historial">Tus visitas anteriores, en un solo lugar</string>
-    <string name="turnos_tab_proximos">Proximos</string>
+    <string name="turnos_subtitulo_historial">Tus visitas anteriores, en un solo lugar.</string>
+    <string name="turnos_tab_proximos">Próximos</string>
     <string name="turnos_tab_historial">Historial</string>
     <string name="turnos_seccion_proximos">PRÓXIMOS</string>
     <string name="turnos_seccion_historial">ÚLTIMAS VISITAS</string>
