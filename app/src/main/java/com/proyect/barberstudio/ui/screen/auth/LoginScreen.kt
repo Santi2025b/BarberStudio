@@ -21,6 +21,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel // NUEVO: para pedir el Vi
 import com.proyect.barberstudio.R
 import com.proyect.barberstudio.ui.components.AppTextField
 import com.proyect.barberstudio.ui.theme.BarberStudioTheme
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun LoginScreen(
@@ -63,6 +65,7 @@ fun LoginContent(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 48.dp)
     ) {
 
@@ -191,7 +194,7 @@ fun LoginContent(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         //TEXTO FINAL
         Row(
