@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource // NUEVO
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.proyect.barberstudio.R // NUEVO
 
 @Composable
 fun ProfileMenuItem(
@@ -30,7 +32,7 @@ fun ProfileMenuItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -38,7 +40,7 @@ fun ProfileMenuItem(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = title,
+            contentDescription = null, // el título de al lado ya dice lo mismo
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(24.dp)
         )
@@ -50,18 +52,18 @@ fun ProfileMenuItem(
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Text(text = subtitle,
+            Text(
+                text = subtitle,
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Icon(
             imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Ir a $title",
+            // el texto va a strings.xml. %1$s se llena con el título.
+            contentDescription = stringResource(R.string.menu_ir_a, title),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
-
     }
-
 }
