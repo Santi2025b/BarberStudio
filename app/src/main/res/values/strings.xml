@@ -163,5 +163,19 @@
     <string name="reservar_ver_mis_turnos">Ver mis turnos</string>
     <string name="reservar_volver_inicio">Volver al inicio</string>
 
+    <!--Perfil -->
+    <string name="perfil_titulo">Mi perfil</string>
+    <string name="perfil_subtitulo">Todo lo tuyo, en un solo lugar.</string>
+    <string name="perfil_foto_descripcion">Foto de perfil</string>
+    <string name="perfil_editar">Editar perfil</string>
+    <string name="perfil_mi_cuenta">MI CUENTA</string>
+    <string name="perfil_datos_titulo">Datos personales</string>
+    <string name="perfil_datos_subtitulo">Nombre, correo y teléfono</string>
+    <string name="perfil_notificaciones_subtitulo">Recordatorios de turnos</string>
+    <string name="perfil_historial_titulo">Historial de turnos</string>
+    <string name="perfil_historial_subtitulo">Revisá tus visitas anteriores</string>
+    <string name="perfil_cerrar_sesion">Cerrar sesión</string>
+    <string name="menu_ir_a">Ir a %1$s</string>
+
 
 </resources>
