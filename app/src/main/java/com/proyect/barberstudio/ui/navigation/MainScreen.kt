@@ -15,29 +15,27 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState // NUEVO
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewmodel.compose.viewModel // NUEVO
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.proyect.barberstudio.data.DatosDePrueba
-import com.proyect.barberstudio.data.model.EstadoTurno
 import com.proyect.barberstudio.ui.screen.home.InicioScreen
 import com.proyect.barberstudio.ui.screen.home.ProfileScreen
 import com.proyect.barberstudio.ui.screen.reservar.ReservarTurnoScreen
 import com.proyect.barberstudio.ui.screen.turnos.MisTurnosScreen
+import com.proyect.barberstudio.ui.screen.turnos.TurnosViewModel // NUEVO
 import kotlinx.serialization.Serializable
 
-// ANTES: sealed interface DestinoMain {
-// CAMBIO: ": NavKey" = estos destinos se pueden guardar en la pila
+// ": NavKey" = estos destinos se pueden guardar en la pila
 sealed interface DestinoMain : NavKey {
-    // CAMBIO: @Serializable en cada destino = Kotlin sabe convertirlo a datos para guardarlo al girar
+    // @Serializable en cada destino = Kotlin sabe convertirlo a datos para guardarlo al girar
     @Serializable data object Inicio : DestinoMain
     @Serializable data object Reservar : DestinoMain
     @Serializable data object MisTurnos : DestinoMain
@@ -60,28 +58,42 @@ sealed class BottomBarItem(val destino: DestinoMain, val titulo: String, val ico
 //contenedor base
 @Composable
 fun MainScreen() {
-    // ANTES: val backStack = remember { mutableStateListOf<DestinoMain>(DestinoMain.Inicio) }
-    // CAMBIO: rememberNavBackStack = una pila que sobrevive al girar el celular
+    // rememberNavBackStack = una pila que sobrevive al girar el celular
     val backStack = rememberNavBackStack(DestinoMain.Inicio)
 
-    var turnosProximos by remember { mutableStateOf(DatosDePrueba.turnosProximos) }
-    var turnosPasados by remember { mutableStateOf(DatosDePrueba.turnosPasados) }
+    // ANTES:
+    // var turnosProximos by remember { mutableStateOf(DatosDePrueba.turnosProximos) }
+    // var turnosPasados by remember { mutableStateOf(DatosDePrueba.turnosPasados) }
+    // CAMBIO: los turnos viven en un ViewModel, que no se borra al girar.
+    // Se crea acá arriba (y no dentro de un entry) porque lo usan DOS pantallas: Reservar y Mis turnos.
+    val turnosViewModel: TurnosViewModel = viewModel()
+    val turnos by turnosViewModel.uiState.collectAsState() // turnos.proximos y turnos.pasados
 
     // Barra de abajo: si ya estás en esa pestaña no hace nada; si no, deja solo Inicio y agrega la nueva
-    val irAPestana: (DestinoMain) -> Unit = { destino ->
-        if (backStack.lastOrNull() != destino) {
-            backStack.retainAll { it == DestinoMain.Inicio } // retainAll = "quedate solo con los que cumplan esto"
-            if (destino != DestinoMain.Inicio) {
-                backStack.add(destino)
-            }
+    fun irAPestana(destino: DestinoMain) {
+        // 1) ¿Qué pantalla está arriba de la pila ahora? (null si la pila está vacía)
+        val pantallaActual = backStack.lastOrNull()
+
+        // 2) Si ya estoy en esa pestaña, no hago nada y salgo
+        val yaEstoyAhi = pantallaActual == destino
+        if (yaEstoyAhi) {
+            return
+        }
+
+        // 3) Vacío la pila dejando SOLO Inicio (retainAll = "quedate solo con los que cumplan esto")
+        backStack.retainAll { pantalla -> pantalla == DestinoMain.Inicio }
+
+        // 4) Si el destino no es Inicio, lo pongo arriba de Inicio
+        val esInicio = destino == DestinoMain.Inicio
+        if (!esInicio) {
+            backStack.add(destino)
         }
     }
 
-    // La pestaña iluminada = la última de la pila
+    // La pestaña iluminada = la última de la pila, o sea la que estamos viendo en pantalla
     val pestanaActual = backStack.lastOrNull()
 
-    //reserva un espacio exclusivo en la parte inferior para el bottomBar y provee un margen dinamico
-    // para que los botonos no queden tapados
+    // Botones de navegacion
     Scaffold(
         bottomBar = {
             //contenedor principal visual de la franja inferior de la app
@@ -103,7 +115,7 @@ fun MainScreen() {
     ) { innerPadding ->
         NavDisplay(
             backStack = backStack,
-            onBack = {
+            onBack = {  //
                 if (backStack.size > 1) {
                     backStack.removeLastOrNull()
                 }
@@ -131,10 +143,9 @@ fun MainScreen() {
                         servicios = DatosDePrueba.servicios,
                         barberos = DatosDePrueba.barberos,
                         horarios = DatosDePrueba.horarios,
-                        onTurnoConfirmado = { turno ->
-                            val nuevoId = ((turnosProximos + turnosPasados).maxOfOrNull { it.id } ?: 0) + 1
-                            turnosProximos = turnosProximos + turno.copy(id = nuevoId)
-                        },
+                        // ANTES: { turno -> val nuevoId = ... ; turnosProximos = turnosProximos + ... }
+                        // CAMBIO: la cuenta del id ahora la hace el ViewModel. Acá solo le pasamos el turno.
+                        onTurnoConfirmado = { turno -> turnosViewModel.agregarTurno(turno) },
                         onVerMisTurnos = { irAPestana(DestinoMain.MisTurnos) },
                         onVolverAlInicio = { irAPestana(DestinoMain.Inicio) }
                     )
@@ -142,13 +153,12 @@ fun MainScreen() {
 
                 entry<DestinoMain.MisTurnos> {
                     MisTurnosScreen(
-                        turnosProximos = turnosProximos,
-                        turnosPasados = turnosPasados,
-                        onCancelarTurno = { turno ->
-                            turnosProximos = turnosProximos - turno
-                            turnosPasados =
-                                listOf(turno.copy(estado = EstadoTurno.CANCELADO)) + turnosPasados
-                        },
+                        // CAMBIO: las listas salen del estado del ViewModel
+                        turnosProximos = turnos.proximos,
+                        turnosPasados = turnos.pasados,
+                        // ANTES: { turno -> turnosProximos = turnosProximos - turno ; turnosPasados = ... }
+                        // CAMBIO: le avisamos al ViewModel qué turno cancelar
+                        onCancelarTurno = { turno -> turnosViewModel.cancelarTurno(turno) },
                         onVolverAReservar = { irAPestana(DestinoMain.Reservar) },
                         onReservarClick = { irAPestana(DestinoMain.Reservar) },
                         onNotificacionesClick = {}
