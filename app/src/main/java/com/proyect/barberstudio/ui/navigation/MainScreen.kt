@@ -15,12 +15,12 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState // NUEVO
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.viewmodel.compose.viewModel // NUEVO
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -30,8 +30,9 @@ import com.proyect.barberstudio.ui.screen.home.InicioScreen
 import com.proyect.barberstudio.ui.screen.home.ProfileScreen
 import com.proyect.barberstudio.ui.screen.reservar.ReservarTurnoScreen
 import com.proyect.barberstudio.ui.screen.turnos.MisTurnosScreen
-import com.proyect.barberstudio.ui.screen.turnos.TurnosViewModel // NUEVO
+import com.proyect.barberstudio.ui.screen.turnos.TurnosViewModel
 import kotlinx.serialization.Serializable
+import com.proyect.barberstudio.ui.screen.reservar.ReservaViewModel
 
 // ": NavKey" = estos destinos se pueden guardar en la pila
 sealed interface DestinoMain : NavKey {
@@ -138,13 +139,15 @@ fun MainScreen() {
                 }
 
                 entry<DestinoMain.Reservar> {
+                    // NUEVO: el ViewModel de la reserva se crea DENTRO del entry
+                    val reservaViewModel: ReservaViewModel = viewModel()
+
                     ReservarTurnoScreen(
+                        viewModel = reservaViewModel, // NUEVO
                         nombreUsuario = DatosDePrueba.NOMBRE_USUARIO,
                         servicios = DatosDePrueba.servicios,
                         barberos = DatosDePrueba.barberos,
                         horarios = DatosDePrueba.horarios,
-                        // ANTES: { turno -> val nuevoId = ... ; turnosProximos = turnosProximos + ... }
-                        // CAMBIO: la cuenta del id ahora la hace el ViewModel. Acá solo le pasamos el turno.
                         onTurnoConfirmado = { turno -> turnosViewModel.agregarTurno(turno) },
                         onVerMisTurnos = { irAPestana(DestinoMain.MisTurnos) },
                         onVolverAlInicio = { irAPestana(DestinoMain.Inicio) }

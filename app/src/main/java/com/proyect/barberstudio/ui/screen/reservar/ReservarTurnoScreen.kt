@@ -21,10 +21,12 @@ import com.proyect.barberstudio.data.model.Servicio
 import com.proyect.barberstudio.data.model.Turno
 import com.proyect.barberstudio.ui.components.PasosReserva
 
-// La pantalla "Reservar turno". Guarda en qué paso está y lo que el usuario va eligiendo,
-// y muestra el paso que corresponde. Cuando se confirma, AVISA con onTurnoConfirmado (no guarda el turno).
+// La pantalla "Reservar turno". Muestra el paso segun el estado del ViewModel.
+// Cuando se confirma, AVISA con onTurnoConfirmado (no guarda el turno, eso lo hace TurnosViewModel).
 @Composable
 fun ReservarTurnoScreen(
+    // el ViewModel lo crea la navegación (en MainScreen) y nos lo pasa por parametro.
+    viewModel: ReservaViewModel,
     nombreUsuario: String,
     servicios: List<Servicio>,
     barberos: List<Barbero>,
@@ -33,24 +35,20 @@ fun ReservarTurnoScreen(
     onVerMisTurnos: () -> Unit,
     onVolverAlInicio: () -> Unit
 ) {
-    // ----- Estado del recorrido -----
-    // Usamos remember (no rememberSaveable): si te vas a otra pestaña y volvés, la reserva arranca de cero.
-    // Además Android no sabe guardar un Servicio o un Barbero.
-    var paso by remember { mutableIntStateOf(1) }             // 1 a 5: qué paso se ve
-    var dia by remember { mutableStateOf<Int?>(null) }         // null = todavía no eligió
-    var hora by remember { mutableStateOf<String?>(null) }
-    var servicio by remember { mutableStateOf<Servicio?>(null) }
-    var barbero by remember { mutableStateOf<Barbero?>(null) }
-    var notas by remember { mutableStateOf("") }
+    // ANTES (6 variables sueltas que se borraban al girar):
+    // var paso by remember { mutableIntStateOf(1) } ... y demas variables
+
+    // CAMBIO: una sola foto que viene del ViewModel y podemos solo leer.
+    val estado by viewModel.uiState.collectAsState()
 
     // ----- Valores calculados a partir del estado (se recalculan solos en cada redibujo) -----
-    val resumenFechaHora = textoFechaHora(dia, hora)
-    val turno = armarTurno(dia, hora, servicio, barbero)  // null mientras falte algo
+    // CAMBIO: ahora se leen de "estado."
+    val resumenFechaHora = textoFechaHora(estado.dia, estado.hora)
+    val turno = armarTurno(estado.dia, estado.hora, estado.servicio, estado.barbero) // null mientras falte algo
 
-    // El botón Atrás del celular: en los pasos 2 a 4 vuelve un paso.
-    // En el paso 1 y en el 5 no hace nada especial, y Atrás funciona como siempre.
-    BackHandler(enabled = paso in 2..4) {
-        paso -= 1
+    // El botón Atrás del celular, en los pasos 2 a 4 vuelve un paso.
+    BackHandler(enabled = estado.paso in 2..4) {
+        viewModel.volverUnPaso()
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -62,13 +60,13 @@ fun ReservarTurnoScreen(
                 .padding(start = 8.dp, end = 24.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (paso < 5) {
+            if (estado.paso < 5) {
                 IconButton(
                     onClick = {
-                        if (paso > 1) {
-                            paso -= 1             // vuelve un paso
+                        if (estado.paso > 1) {
+                            viewModel.volverUnPaso()
                         } else {
-                            onVolverAlInicio()    // en el paso 1, la flecha sale a Inicio
+                            onVolverAlInicio()       // en el paso 1, la flecha sale a Inicio
                         }
                     }
                 ) {
@@ -81,37 +79,37 @@ fun ReservarTurnoScreen(
             Text(text = stringResource(R.string.reservar_titulo), fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
         }
 
-        PasosReserva(pasoActual = paso, modifier = Modifier.padding(horizontal = 24.dp))
+        PasosReserva(pasoActual = estado.paso, modifier = Modifier.padding(horizontal = 24.dp))
 
         Spacer(modifier = Modifier.height(20.dp))
 
         // El contenido del paso: ocupa todo el alto que queda
         Box(modifier = Modifier.weight(1f)) {
-            // "when" elige qué paso dibujar. Cambiar "paso" = Compose redibuja y aparece otro.
-            when (paso) {
+            // "when" elige qué paso dibujar. Cambia el paso en el ViewModel = Compose redibuja y aparece otro.
+            when (estado.paso) {
                 1 -> PasoFechaHora(
-                    diaElegido = dia,
-                    horaElegida = hora,
+                    diaElegido = estado.dia,
+                    horaElegida = estado.hora,
                     horarios = horarios,
                     resumen = resumenFechaHora,
-                    onDiaClick = { dia = it },
-                    onHoraClick = { hora = it },
-                    onContinuar = { paso = 2 }
+                    onDiaClick = { dia -> viewModel.onDiaClick(dia) },
+                    onHoraClick = { hora -> viewModel.onHoraClick(hora) },
+                    onContinuar = { viewModel.irAPaso(2) }
                 )
 
                 2 -> PasoServicio(
                     servicios = servicios,
-                    servicioElegido = servicio,
-                    onServicioClick = { servicio = it },
-                    onContinuar = { paso = 3 }
+                    servicioElegido = estado.servicio,
+                    onServicioClick = { servicio -> viewModel.onServicioClick(servicio) },
+                    onContinuar = { viewModel.irAPaso(3) }
                 )
 
                 3 -> PasoBarbero(
                     barberos = barberos,
-                    barberoElegido = barbero,
+                    barberoElegido = estado.barbero,
                     resumenFechaHora = resumenFechaHora,
-                    onBarberoClick = { barbero = it },
-                    onContinuar = { paso = 4 }
+                    onBarberoClick = { barbero -> viewModel.onBarberoClick(barbero) },
+                    onContinuar = { viewModel.irAPaso(4) }
                 )
 
                 // Los pasos 4 y 5 necesitan el turno completo. "turno" es una val local,
@@ -120,12 +118,12 @@ fun ReservarTurnoScreen(
                     PasoRevisar(
                         nombreUsuario = nombreUsuario,
                         turno = turno,
-                        notas = notas,
-                        onNotasChange = { notas = it },
-                        onEditarClick = { paso = 1 }, // vuelve al principio, pero lo elegido sigue guardado
+                        notas = estado.notas,
+                        onNotasChange = { notas -> viewModel.onNotasChange(notas) },
+                        onEditarClick = { viewModel.irAPaso(1) }, // vuelve al principio, pero lo elegido sigue guardado
                         onConfirmar = {
-                            onTurnoConfirmado(turno) // aviso hacia afuera: MainScreen lo agrega a Mis turnos
-                            paso = 5
+                            onTurnoConfirmado(turno) // aviso hacia afuera: MainScreen se lo pasa a TurnosViewModel
+                            viewModel.irAPaso(5)
                         }
                     )
                 }
@@ -134,8 +132,16 @@ fun ReservarTurnoScreen(
                     PasoConfirmado(
                         nombreUsuario = nombreUsuario,
                         turno = turno,
-                        onVerMisTurnos = onVerMisTurnos,
-                        onVolverAlInicio = onVolverAlInicio
+                        // NUEVO: al salir de "Listo" vaciamos la reserva. Si no, al volver a la
+                        // pestaña Reservar aparecería otra vez la pantalla "Listo" del turno anterior.
+                        onVerMisTurnos = {
+                            viewModel.reiniciar()
+                            onVerMisTurnos()
+                        },
+                        onVolverAlInicio = {
+                            viewModel.reiniciar()
+                            onVolverAlInicio()
+                        }
                     )
                 }
             }
@@ -157,7 +163,7 @@ private fun armarTurno(dia: Int?, hora: String?, servicio: Servicio?, barbero: B
     if (dia == null || hora == null || servicio == null || barbero == null) return null
 
     return Turno(
-        id = 0,                                  // el id definitivo lo pone MainScreen al guardarlo
+        id = 0,                                  // el id definitivo lo pone TurnosViewModel al guardarlo
         dia = dia.toString().padStart(2, '0'),   // 5 -> "05", 16 -> "16" (para la cajita de fecha)
         mes = DatosDePrueba.MES_CORTO,
         fecha = DatosDePrueba.fechaLarga(dia),
